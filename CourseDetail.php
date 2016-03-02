@@ -22,45 +22,47 @@
         $result = 'No post data yet.';
     }
 ///////////////////////////////////////////////////////////////////////////////////////
-    $courseArr = @array();
-    $courseCount = $xml->Courses->Course;
-    for($k=0;$k<count($courseCount);$k++){
-        $courseNumber = $xml->Courses->Course[$k]->attributes();
-        $courseNameEng = $xml->Courses->Course[$k]->NameEng;
-        $courseArr[trim($courseNumber)]  = $courseNameEng ;
-    }
-///////////////////////////////////////////////////////////////////////////////////////
-    $termCount = $xml->Plans->Plan->YearSem;
-    for($i=0;$i<count($termCount);$i++){
-        //===================================================
-        $attr = $xml->Plans->Plan->YearSem[$i]->attributes();
-        echo "<b style='color:blue;font-size:20px'>ปีที่  " . $attr['year'];
-        echo " ภาคเรียนที่ " . $attr['sem'] . "</b>";
-        //===================================================
-        $courseCount = $xml->Plans->Plan->YearSem[$i]->Course->count();
-        echo "<table class=\"table table-striped table-bordered table-hover\">";
-        echo "     <thead>";
-        echo "         <tr>";
-        echo "             <th width=10%>ลำดับ</th>";
-        echo "             <th width=20%>รหัสวิชา</th>";
-        echo "             <th width=55%>ชื่อวิชา</th>";
-        echo "             <th width=15%>หน่วยกิต</th>";
-        echo "         </tr>";
-        echo "     </thead>";
-        for($j=0;$j<$courseCount;$j++){
-            $courseID = $xml->Plans->Plan->YearSem[$i]->Course[$j]->Display;
-            if (strpos($courseID, 'X') !== false) { // ถ้าเจอ string แสดงว่าเป็นวิชาเลือกภาษา/เลือกเสรี
-                $courseID = "<font color=red>วิชาเลือกเสรี</font>";
-            }
-            echo "<tr>";
-            echo "    <td>XXX</td>";
-            echo "    <td>" . $courseID . "</td>";
-            echo "    <td>" . $courseArr[trim($courseID)] . "</td>";
-            echo "    <td>" . $xml->Plans->Plan->YearSem[$i]->Course[$j]->Crd;
-            echo              "(" . $xml->Plans->Plan->YearSem[$i]->Course[$j]->No_Hlec . "-";
-            echo              $xml->Plans->Plan->YearSem[$i]->Course[$j]->No_Hlab . ")</td>";
-            echo "</tr>";
+    //echo "จำนวณแขนง " . count($xml->Options->Option)      . "<br/>";
+    for($id=0;$id<count($xml->Options->Option);$id++){
+        echo "<b style='color:red;font-size:20px'>" . $xml->Options->Option[$id]->NameThai . " (" . $xml->Options->Option[$id]->NameEng . ")</b><br/>";
+        $courseArr = @array();
+        $courseCount = $xml->Courses->Course;
+        $termCount = $xml->Plans->Plan[$id]->YearSem;
+        for($k=0;$k<count($courseCount);$k++){
+            $courseNumber = $xml->Courses->Course[$k]->attributes();
+            $courseNameEng = $xml->Courses->Course[$k]->NameThai;
+            $courseArr[trim($courseNumber)]  = $courseNameEng ;
         }
-            echo "</table>";
+        for($i=0;$i<count($termCount);$i++){
+            $attr = $xml->Plans->Plan[$id]->YearSem[$i]->attributes();
+            echo "<b style='color:blue;font-size:20px'>ปีที่  " . $attr['year'];
+            echo " ภาคเรียนที่ " . $attr['sem'] . "</b>";
+            $courseCount = $xml->Plans->Plan[$id]->YearSem[$i]->Course->count();
+            echo "<table class=\"table table-striped table-bordered table-hover\">";
+            echo "     <thead>";
+            echo "         <tr>";
+            echo "             <th width=10%>ลำดับ</th>";
+            echo "             <th width=20%>รหัสวิชา</th>";
+            echo "             <th width=55%>ชื่อวิชา</th>";
+            echo "             <th width=15%>หน่วยกิต</th>";
+            echo "         </tr>";
+            echo "     </thead>";
+            for($j=0;$j<$courseCount;$j++){
+                $courseID = $xml->Plans->Plan[$id]->YearSem[$i]->Course[$j]->Display;
+                if (strpos($courseID, 'X') !== false) { // ถ้าเจอ string แสดงว่าเป็นวิชาเลือกภาษา/เลือกเสรี
+                    $courseID = "<font color=red>วิชาเลือกเสรี</font>";
+                }
+                echo "<tr>";
+                echo "    <td>XXX</td>";
+                echo "    <td>" . $courseID . "</td>";
+                echo "    <td>" . $courseArr[trim($courseID)] . "</td>";
+                echo "    <td>" . $xml->Plans->Plan[$id]->YearSem[$i]->Course[$j]->Crd;
+                echo              "(" . $xml->Plans->Plan[$id]->YearSem[$i]->Course[$j]->No_Hlec . "-";
+                echo              $xml->Plans->Plan[$id]->YearSem[$i]->Course[$j]->No_Hlab . ")</td>";
+                echo "</tr>";
+            }
+                echo "</table>";
+        }
+        echo "<br/><hr/><br/>";
     }
 ?>
